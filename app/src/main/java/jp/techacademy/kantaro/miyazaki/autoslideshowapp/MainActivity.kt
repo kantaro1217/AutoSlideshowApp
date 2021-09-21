@@ -11,6 +11,7 @@ import android.content.ContentUris
 import android.os.Handler
 import androidx.core.net.toUri
 import kotlinx.android.synthetic.main.activity_main.*
+import java.lang.Exception
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
@@ -75,6 +76,8 @@ class MainActivity : AppCompatActivity() {
         start_button.setOnClickListener {
             if (mTimer == null && checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
                 mTimer = Timer()
+                forward_button.isEnabled = false
+                back_button.isEnabled = false
                 start_button.text = "停止"
                 mTimer!!.schedule(object : TimerTask() {
                     override fun run() {
@@ -93,18 +96,26 @@ class MainActivity : AppCompatActivity() {
             else if(mTimer != null){
                 mTimer!!.cancel()
                 mTimer = null
+                forward_button.isEnabled = true
+                back_button.isEnabled = true
                 start_button.text = "再生"
             }
         }
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-        when (requestCode) {
-            PERMISSIONS_REQUEST_CODE ->
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    getContentsInfo()
-                }
+        try {
+            when (requestCode) {
+                PERMISSIONS_REQUEST_CODE ->
+                    if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                        getContentsInfo()
+                    }
+            }
+        }catch (e: Exception)   {
+            Log.d("error", "Strage内に画像がありません")
         }
+
+
     }
 
     private fun getContentsInfo() {
