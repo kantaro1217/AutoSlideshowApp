@@ -46,7 +46,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         forward_button.setOnClickListener {
-            if (mTimer == null && checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+            if (mTimer == null && this.imageList.size != 0 && checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
                 if (this.currentPos+1 < this.listSize){
                     this.currentPos += 1
                     imageView.setImageURI(this.imageList[this.currentPos].toUri())
@@ -60,7 +60,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         back_button.setOnClickListener {
-            if (mTimer == null && checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+            if (mTimer == null && this.imageList.size != 0 && checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
                 if (this.currentPos > 0){
                     this.currentPos -= 1
                     imageView.setImageURI(this.imageList[this.currentPos].toUri())
@@ -74,7 +74,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         start_button.setOnClickListener {
-            if (mTimer == null && checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+            if (mTimer == null && this.imageList.size != 0 && checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
                 mTimer = Timer()
                 forward_button.isEnabled = false
                 back_button.isEnabled = false
@@ -111,10 +111,7 @@ class MainActivity : AppCompatActivity() {
                         getContentsInfo()
                     }
             }
-        }catch (e: Exception)   {
-            Log.d("error", "Strage内に画像がありません")
-        }
-
+        }catch (e: Exception){}
 
     }
 
@@ -128,6 +125,7 @@ class MainActivity : AppCompatActivity() {
                 null, // フィルタ用パラメータ
                 null // ソート (nullソートなし）
         )
+        Log.d("check" , resolver.toString())
 
         if (cursor!!.moveToFirst()) {
             do {
@@ -140,8 +138,9 @@ class MainActivity : AppCompatActivity() {
                 imageList.add(imageUri.toString())
             } while (cursor.moveToNext())
         }
-
-        imageView.setImageURI(this.imageList[0].toUri())
+        if(this.imageList.size != 0) {
+            imageView.setImageURI(this.imageList[0].toUri())
+        }
         this.listSize = imageList.size
         cursor.close()
     }
